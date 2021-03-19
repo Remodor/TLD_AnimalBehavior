@@ -5,8 +5,8 @@ namespace AnimalBehavior
 {
     public class Implementation : MelonMod
     {
-        internal static float currentStalkingIntervalTime = 0;
-        internal static bool StalkRandomShouldAttack(BaseAi instance)
+        private static float currentStalkingIntervalTime = 0;
+        internal static bool WolfRandomShouldAttack(BaseAi instance)
         {
             if (instance.m_ForceChasePlayerSpeed) { return true; } // If it has been successfull once.
             if (GameManager.GetPlayerManagerComponent().PlayerIsZooming())
@@ -28,7 +28,40 @@ namespace AnimalBehavior
             }
             else
             {
+                // Reset the clock when the player is not aiming.
                 currentStalkingIntervalTime = AB_Settings.Get().wolf_stalking_attack_interval;
+            }
+            return false;
+        }
+        private static float currentHoldGroundIntervalTime = 0;
+        private static bool TwShouldFlee = false;
+        internal static bool TwRandomShouldFlee(BaseAi instance)
+        {
+            if (!GameManager.GetPlayerManagerComponent().PlayerIsZooming()) // Reset when not zooming.
+            {
+                //!delete 
+                MelonLoader.MelonLogger.Log("reset");
+
+                currentHoldGroundIntervalTime = Time.time - AB_Settings.Get().tw_holding_ground_flee_interval;
+                TwShouldFlee = false;
+                return false;
+            }
+            if (TwShouldFlee) // Keep fleeing until reset.
+            {
+                return true;
+            }
+
+            if (currentHoldGroundIntervalTime <= Time.time - AB_Settings.Get().tw_holding_ground_flee_interval)
+            {
+                //!delete 
+                MelonLoader.MelonLogger.Log("time: {0}, interval time: {1}", currentHoldGroundIntervalTime, AB_Settings.Get().tw_holding_ground_flee_interval);
+
+                bool roll = TwShouldFlee = Utils.RollChance(AB_Settings.Get().tw_holding_ground_flee_chance);
+                currentHoldGroundIntervalTime = Time.time;
+                //!delete 
+                MelonLoader.MelonLogger.Log("rollresult: {0}, rollchance: {1}", roll, AB_Settings.Get().tw_holding_ground_flee_chance);
+
+                return roll;
             }
             return false;
         }
@@ -54,6 +87,8 @@ namespace AnimalBehavior
                 instance.m_SmellRange = settings.timberwolf_smell_range;
                 instance.m_DetectionRange = settings.timberwolf_detection_range;
                 instance.m_HearFootstepsRange = settings.timberwolf_hear_range;
+                instance.m_DetectionRangeWhileFeeding = settings.timberwolf_detection_range_while_feeding;
+                instance.m_HearFootstepsRangeWhileFeeding = settings.timberwolf_hear_range_while_feeding;
                 instance.m_MinimumFleeTime = settings.timberwolf_flee_duration;
             }
         }
