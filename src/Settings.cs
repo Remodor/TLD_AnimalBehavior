@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using ModSettings;
+using UnityEngine;
 
 namespace AnimalBehavior
 {
@@ -24,9 +25,9 @@ namespace AnimalBehavior
         [Choice("Vanilla", "Nothing", "Random")]
         public WolfStalkingBehavior wolf_stalking_behavior = WolfStalkingBehavior.Vanilla;
         [Name("        Attack Probability")]
-        [Description("The probability for an attack everytime it is checked.\n(0% = Never, 100% = Always, Default = 30%)")]
+        [Description("The probability for an attack everytime it is checked.\n(0% = Never, 100% = Always, Default = 40%)")]
         [Slider(0f, 100f, 101)]
-        public float wolf_stalking_attack_chance = 20f;
+        public float wolf_stalking_attack_chance = 40f;
         [Name("        Attack Probability Interval")]
         [Description("The duration between each probability check in seconds. The first one is when you begin to aim.\n(Default = 2s)")]
         [Slider(0f, 10f, 101)]
@@ -45,13 +46,13 @@ namespace AnimalBehavior
         public TwHoldingGround tw_holding_ground_behavior = TwHoldingGround.Vanilla;
         [Name("        Direct Aim Accuracy")]
         [Description("How close you have to aim you crosshair on a wolf.\n(0 = Aim anywhere, 1 = Directly on it, Default = 0.94)")]
-        [Slider(0f, 1f, 101)]
+        [Slider(0f, 99f, 100)]
         public float tw_holding_ground_aim_accuracy = 0.94f;
 
         [Name("        Flee Probability")]
-        [Description("The probability for fleeing everytime it is checked.\n(0% = Never, 100% = Always, Default = 30%)")]
+        [Description("The probability for fleeing everytime it is checked.\n(0% = Never, 100% = Always, Default = 50%)")]
         [Slider(0f, 100f, 101)]
-        public float tw_holding_ground_flee_chance = 20f;
+        public float tw_holding_ground_flee_chance = 50f;
         [Name("        Flee Probability Interval")]
         [Description("The duration between each probability check in seconds.\n(Default = 2s)")]
         [Slider(0f, 10f, 101)]
@@ -68,12 +69,12 @@ namespace AnimalBehavior
         [Choice("Vanilla", "CanKill", "AllRandom")]
         public StunBehavior rabbit_stun_behavior = StunBehavior.Vanilla;
         [Name("        Kill On Hit Probability")]
-        [Description("The probability to instantly kill the rabbit.\n(Vanilla = 0%, default = 15%")]
+        [Description("The probability to instantly kill the rabbit.\n(Vanilla = 0%, default = 15%)")]
         [Slider(0f, 100f, 101)]
         public float rabbit_kill_on_hit_chance = 15f;
         [Name("        Minimum Stun Duration")]
-        [Description("The minimum stun duration when set to random.\n(Vanilla = 4, default = 1")]
-        [Slider(0f, 100f, 101)]
+        [Description("The minimum stun duration when set to random. It is bounded by the maximum duration (the stun duration in the rabbits section).\n(Vanilla = 4, default = 1)")]
+        [Slider(0f, 30f, 61)]
         public float rabbit_minimum_stun_duration = 1f;
 
         //* ----Animal Stats----
@@ -211,7 +212,7 @@ namespace AnimalBehavior
         [Description("The minimum flee duration in seconds.\n(Vanilla = 4)")]
         [Slider(0f, 60f, 61)]
         public float rabbit_flee_duration = 4f;
-        [Name("Stun Duration")]
+        [Name("        Stun Duration")]
         [Description("The stun duration in seconds when hit with a stone.\n(Vanilla = 4)")]
         [Slider(0f, 30f, 61)]
         public float rabbit_stun_duration = 4;
@@ -335,6 +336,8 @@ namespace AnimalBehavior
         }
         protected override void OnChange(FieldInfo field, object oldValue, object newValue)
         {
+            rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_stun_duration);
+            base.RefreshGUI();
             base.OnChange(field, oldValue, newValue);
             if (field.Name == "wolf_enabled") SetWolfVisibility((bool)newValue);
             else if (field.Name == "timberwolf_enabled") SetTimberwolfVisibility((bool)newValue);
@@ -345,6 +348,12 @@ namespace AnimalBehavior
             else if (field.Name == "wolf_stalking_behavior") SetWolfStalkingBehaviorVisibility((WolfStalkingBehavior)newValue);
             else if (field.Name == "tw_holding_ground_behavior") SetTwHoldingGroundBehaviorVisibility((TwHoldingGround)newValue);
             else if (field.Name == "rabbit_stun_behavior") SetRabbitStunBehaviorVisibility((StunBehavior)newValue);
+        }
+        protected override void OnConfirm()
+        {
+            rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_stun_duration);
+            base.RefreshGUI();
+            base.OnConfirm();
         }
     }
 

@@ -147,21 +147,7 @@ namespace AnimalBehavior
     [HarmonyPatch(typeof(BaseAi), "Stun")]
     internal class BaseAi_Stun
     {
-        internal static void Prefix(BaseAi __instance)
-        {
-            if (__instance.m_AiSubType == AiSubType.Rabbit &&
-            Settings.Get().rabbit_stun_behavior == StunBehavior.AllRandom)
-            {
-                float min = Settings.Get().rabbit_minimum_stun_duration;
-                float max = Settings.Get().rabbit_stun_duration;
-                float random_dur = UnityEngine.Random.Range(min, max);
-                __instance.m_StunSeconds = random_dur;
-                //!delete 
-                MelonLoader.MelonLogger.Log("RandomDur: {0}, Between: {1}, and: {2}", random_dur, min, max);
-
-            }
-        }
-        internal static void Postfix(BaseAi __instance)
+        internal static bool Prefix(BaseAi __instance)
         {
             if (__instance.m_AiSubType == AiSubType.Rabbit &&
             Settings.Get().rabbit_stun_behavior != StunBehavior.Vanilla)
@@ -171,9 +157,22 @@ namespace AnimalBehavior
                 MelonLoader.MelonLogger.Log("Kill: {0}, with%: {1}", kill, Settings.Get().rabbit_kill_on_hit_chance);
                 if (kill)
                 {
-                    __instance.EnterDead();
+                    __instance.SetAiMode(AiMode.Dead);
+                    return false;
                 }
+                if (Settings.Get().rabbit_stun_behavior == StunBehavior.AllRandom)
+                {
+                    float min = Settings.Get().rabbit_minimum_stun_duration;
+                    float max = Settings.Get().rabbit_stun_duration;
+                    float random_dur = UnityEngine.Random.Range(min, max);
+                    __instance.m_StunSeconds = random_dur;
+                    //!delete 
+                    MelonLoader.MelonLogger.Log("RandomDur: {0}, Between: {1}, and: {2}", random_dur, min, max);
+                }
+
+
             }
+            return true;
         }
     }
 }
