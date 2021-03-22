@@ -56,18 +56,18 @@ namespace AnimalBehavior
         public WolfHoldingGroundWolves wolf_holding_ground_wolves = WolfHoldingGroundWolves.Both;
 
         [Name("        Direct Aim Accuracy")]
-        [Description("How close you have to aim you crosshair on a wolf.\n(0 = Aim anywhere, 1 = Directly on it, Default = 0.94)")]
-        [Slider(0f, 0.99f, 100)]
-        public float wolf_holding_ground_aim_accuracy = 0.94f;
+        [Description("How close you have to aim you crosshair on a wolf to trigger fleeing.\n(0 = Aim anywhere, 100 = Directly on it, Default = 94)")]
+        [Slider(0f, 100f, 100)]
+        public float wolf_holding_ground_aim_accuracy = 94f;
 
         [Name("        Flee Probability")]
-        [Description("The probability for fleeing everytime it is checked.\n(0% = Never, 100% = Always, Default = 50%)")]
+        [Description("The probability for fleeing everytime it is checked.\n(0% = Never, 100% = Always, Default = 20%)")]
         [Slider(0f, 100f, 101)]
-        public float wolf_holding_ground_flee_chance = 50f;
+        public float wolf_holding_ground_flee_chance = 20f;
         [Name("        Flee Probability Interval")]
-        [Description("The duration between each probability check in seconds.\n(Default = 2s)")]
+        [Description("The duration between each probability check in seconds.\n(Default = 1s)")]
         [Slider(0f, 10f, 101)]
-        public float wolf_holding_ground_flee_interval = 2f;
+        public float wolf_holding_ground_flee_interval = 1f;
 
         public enum StunBehavior
         {
@@ -99,6 +99,10 @@ namespace AnimalBehavior
         [Description("How far it can smell the player while carrying meat.\n(Vanilla = 100)")]
         [Slider(0f, 250f, 251)]
         public float wolf_smell_range = 100f;
+        [Name("        Begin Charging Range")]
+        [Description("How far it will start charging at you when stalking.\n(Vanilla = 15)")]
+        [Slider(0f, 250f, 251)]
+        public float wolf_charging_range = 15f;
 
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 75)")]
@@ -238,6 +242,11 @@ namespace AnimalBehavior
         [Slider(0f, 250f, 251)]
         public float bear_smell_range = 150f;
 
+        [Name("        Begin Charging Range")]
+        [Description("How far it will start charging at you when stalking.\n(Vanilla = 25)")]
+        [Slider(0f, 250f, 251)]
+        public float bear_charging_range = 25f;
+
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 60)")]
         [Slider(0f, 250f, 251)]
@@ -292,6 +301,7 @@ namespace AnimalBehavior
         protected void SetWolfVisibility(bool visible)
         {
             this.SetFieldVisible(GetType().GetField("wolf_smell_range"), visible);
+            this.SetFieldVisible(GetType().GetField("wolf_charging_range"), visible);
             this.SetFieldVisible(GetType().GetField("wolf_detection_range"), visible);
             this.SetFieldVisible(GetType().GetField("wolf_hear_range"), visible);
             this.SetFieldVisible(GetType().GetField("wolf_detection_range_while_feeding"), visible);
@@ -330,6 +340,7 @@ namespace AnimalBehavior
         protected void SetBearVisibility(bool visible)
         {
             this.SetFieldVisible(GetType().GetField("bear_smell_range"), visible);
+            this.SetFieldVisible(GetType().GetField("bear_charging_range"), visible);
             this.SetFieldVisible(GetType().GetField("bear_hear_range"), visible);
             this.SetFieldVisible(GetType().GetField("bear_detection_range"), visible);
             this.SetFieldVisible(GetType().GetField("bear_flee_duration"), visible);

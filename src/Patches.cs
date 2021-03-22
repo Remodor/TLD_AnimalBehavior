@@ -30,7 +30,7 @@ namespace AnimalBehavior
                 }
                 else
                 {
-                    dotProductThreshold = Settings.Get().wolf_holding_ground_aim_accuracy;
+                    dotProductThreshold = Settings.Get().wolf_holding_ground_aim_accuracy / 100f;
                 }
             }
 
@@ -131,6 +131,9 @@ namespace AnimalBehavior
     {
         internal static void Postfix(BaseAi __instance)
         {
+            //!delete 
+            MelonLoader.MelonLogger.Log("m_StalkingBeginChasingDistance: {0}", __instance.m_StalkingBeginChasingDistance);
+
             switch (__instance.m_AiSubType)
             {
                 case AiSubType.Wolf:
@@ -161,6 +164,7 @@ namespace AnimalBehavior
             MelonLoader.MelonLogger.Log("minflee: {0}, m_SmellRange: {1}", __instance.m_MinimumFleeTime, __instance.m_SmellRange);
             MelonLoader.MelonLogger.Log("m_DetectionRange: {0}, m_HearFootstepsRange: {1}", __instance.m_DetectionRange, __instance.m_HearFootstepsRange);
             MelonLoader.MelonLogger.Log("m_DetectionRangeWhileFeeding: {0}, m_HearFootstepsRangeWhileFeeding: {1}", __instance.m_DetectionRangeWhileFeeding, __instance.m_HearFootstepsRangeWhileFeeding);
+            MelonLoader.MelonLogger.Log("m_StalkingBeginChasingDistance: {0}", __instance.m_StalkingBeginChasingDistance);
         }
     }
 

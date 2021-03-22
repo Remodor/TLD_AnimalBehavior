@@ -28,7 +28,6 @@ namespace AnimalBehavior
             return false;
         }
         private static float currentHoldGroundIntervalTime = 0;
-        private static bool WolfShouldFlee = false;
         internal static bool WolfRandomShouldFlee(BaseAi instance)
         {
             if (!GameManager.GetPlayerManagerComponent().PlayerIsZooming()) // Reset when not zooming.
@@ -36,25 +35,18 @@ namespace AnimalBehavior
                 ResetShouldFlee();
                 return false;
             }
-
-            if (WolfShouldFlee) // Keep fleeing until reset.
+            currentHoldGroundIntervalTime += Time.deltaTime;
+            if (currentHoldGroundIntervalTime >= AB_Settings.Get().wolf_holding_ground_flee_interval)
             {
-                return true;
-            }
-
-            if (currentHoldGroundIntervalTime <= Time.time - AB_Settings.Get().wolf_holding_ground_flee_interval)
-            {
-                bool roll = WolfShouldFlee = Utils.RollChance(AB_Settings.Get().wolf_holding_ground_flee_chance);
-                currentHoldGroundIntervalTime = Time.time;
+                bool roll = Utils.RollChance(AB_Settings.Get().wolf_holding_ground_flee_chance);
+                currentHoldGroundIntervalTime = 0;
                 return roll;
             }
             return false;
         }
         internal static void ResetShouldFlee()
         {
-            currentHoldGroundIntervalTime = Time.time - AB_Settings.Get().wolf_holding_ground_flee_interval;
-            WolfShouldFlee = false;
-
+            currentHoldGroundIntervalTime = AB_Settings.Get().wolf_holding_ground_flee_interval;
         }
         internal static void ApplyWolfSettings(BaseAi instance)
         {
@@ -62,6 +54,7 @@ namespace AnimalBehavior
             if (settings.wolf_enabled)
             {
                 instance.m_SmellRange = settings.wolf_smell_range;
+                instance.m_StalkingBeginChasingDistance = settings.wolf_charging_range;
                 instance.m_DetectionRange = settings.wolf_detection_range;
                 instance.m_HearFootstepsRange = settings.wolf_hear_range;
                 instance.m_DetectionRangeWhileFeeding = settings.wolf_detection_range_while_feeding;
@@ -120,6 +113,7 @@ namespace AnimalBehavior
             if (settings.bear_enabled)
             {
                 instance.m_SmellRange = settings.bear_smell_range;
+                instance.m_StalkingBeginChasingDistance = settings.bear_charging_range;
                 instance.m_DetectionRange = settings.bear_detection_range;
                 instance.m_HearFootstepsRange = settings.bear_hear_range;
                 instance.m_MinimumFleeTime = settings.bear_flee_duration;
