@@ -10,7 +10,7 @@ namespace AnimalBehavior
         //* ----Special----
         [Section("Special Behavior")]
         [Name("Bleed Out Modifier")]
-        [Description("The bleed out time is very dependend on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleedout time for arrows, bullets and flare gun shells.\n(Vanilla = 1, A common bleed out duration is 60 ingame minutes)")]
+        [Description("The bleed out time is very dependend on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleedout duration for arrows, bullets and flare gun shells (Not wolf struggle!). A common bleed out duration is 60 ingame minutes, higher modifier means longer.\n(Vanilla = 1)")]
         [Slider(0.1f, 10f, 100)]
         public float bleed_out_multiplier = 1f;
 
@@ -33,30 +33,41 @@ namespace AnimalBehavior
         [Slider(0f, 10f, 101)]
         public float wolf_stalking_attack_interval = 2f;
 
-        public enum TwHoldingGround
+        public enum WolfHoldingGround
         {
             Vanilla,
             DirectAim,
             DirectAimRandom
         }
 
-        [Name("Timberwolf Holding Ground Behavior When Aiming")]
-        [Description("The behavior from threatening timberwolves when the player is near a fire and aims at them.\nVanilla = They flee when the player aims broadly in their direction,\nDirectAim = They flee when directly aimed at them,\nDirectAimRandom = In addition to DirectAim, it is also random.")]
+        [Name("Wolf Holding Ground Behavior When Aiming")]
+        [Description("The behavior from threatening wolves when the player is near a fire and aims at them.\nVanilla = They flee when the player aims broadly in their direction,\nDirectAim = They flee when directly aimed at them,\nDirectAimRandom = In addition to DirectAim, it is also random.")]
         [Choice("Vanilla", "DirectAim", "DirectAimRandom")]
-        public TwHoldingGround tw_holding_ground_behavior = TwHoldingGround.Vanilla;
+        public WolfHoldingGround wolf_holding_ground_behavior = WolfHoldingGround.Vanilla;
+        public enum WolfHoldingGroundWolves
+        {
+            Wolves,
+            Timberwolves,
+            Both
+        }
+        [Name("        Choose Wolves")]
+        [Description("Choose wolves to apply the changes. When applied to timberwolves they will also flee when you fire a gun and they are holding ground.\n(Both = Vanilla, Wolves, Timberwolves)")]
+        [Choice("Wolves", "Timberwolves", "Both")]
+        public WolfHoldingGroundWolves wolf_holding_ground_wolves = WolfHoldingGroundWolves.Both;
+
         [Name("        Direct Aim Accuracy")]
         [Description("How close you have to aim you crosshair on a wolf.\n(0 = Aim anywhere, 1 = Directly on it, Default = 0.94)")]
-        [Slider(0f, 99f, 100)]
-        public float tw_holding_ground_aim_accuracy = 0.94f;
+        [Slider(0f, 0.99f, 100)]
+        public float wolf_holding_ground_aim_accuracy = 0.94f;
 
         [Name("        Flee Probability")]
         [Description("The probability for fleeing everytime it is checked.\n(0% = Never, 100% = Always, Default = 50%)")]
         [Slider(0f, 100f, 101)]
-        public float tw_holding_ground_flee_chance = 50f;
+        public float wolf_holding_ground_flee_chance = 50f;
         [Name("        Flee Probability Interval")]
         [Description("The duration between each probability check in seconds.\n(Default = 2s)")]
         [Slider(0f, 10f, 101)]
-        public float tw_holding_ground_flee_interval = 2f;
+        public float wolf_holding_ground_flee_interval = 2f;
 
         public enum StunBehavior
         {
@@ -69,9 +80,9 @@ namespace AnimalBehavior
         [Choice("Vanilla", "CanKill", "AllRandom")]
         public StunBehavior rabbit_stun_behavior = StunBehavior.Vanilla;
         [Name("        Kill On Hit Probability")]
-        [Description("The probability to instantly kill the rabbit.\n(Vanilla = 0%, default = 15%)")]
+        [Description("The probability to instantly kill the rabbit.\n(Vanilla = 0%, default = 12%)")]
         [Slider(0f, 100f, 101)]
-        public float rabbit_kill_on_hit_chance = 15f;
+        public float rabbit_kill_on_hit_chance = 12f;
         [Name("        Minimum Stun Duration")]
         [Description("The minimum stun duration when set to random. It is bounded by the maximum duration (the stun duration in the rabbits section).\n(Vanilla = 4, default = 1)")]
         [Slider(0f, 30f, 61)]
@@ -249,14 +260,15 @@ namespace AnimalBehavior
             this.SetFieldVisible(GetType().GetField("wolf_stalking_attack_chance"), visible);
             this.SetFieldVisible(GetType().GetField("wolf_stalking_attack_interval"), visible);
         }
-        protected void SetTwHoldingGroundBehaviorVisibility(TwHoldingGround new_holding_ground_behavior)
+        protected void SetWolfHoldingGroundBehaviorVisibility(WolfHoldingGround new_holding_ground_behavior)
         {
-            bool directAim = new_holding_ground_behavior == TwHoldingGround.DirectAim || new_holding_ground_behavior == TwHoldingGround.DirectAimRandom;
-            this.SetFieldVisible(GetType().GetField("tw_holding_ground_aim_accuracy"), directAim);
+            bool directAim = new_holding_ground_behavior == WolfHoldingGround.DirectAim || new_holding_ground_behavior == WolfHoldingGround.DirectAimRandom;
+            this.SetFieldVisible(GetType().GetField("wolf_holding_ground_aim_accuracy"), directAim);
+            this.SetFieldVisible(GetType().GetField("wolf_holding_ground_wolves"), directAim);
 
-            bool directAimRandom = new_holding_ground_behavior == TwHoldingGround.DirectAimRandom;
-            this.SetFieldVisible(GetType().GetField("tw_holding_ground_flee_chance"), directAimRandom);
-            this.SetFieldVisible(GetType().GetField("tw_holding_ground_flee_interval"), directAimRandom);
+            bool directAimRandom = new_holding_ground_behavior == WolfHoldingGround.DirectAimRandom;
+            this.SetFieldVisible(GetType().GetField("wolf_holding_ground_flee_chance"), directAimRandom);
+            this.SetFieldVisible(GetType().GetField("wolf_holding_ground_flee_interval"), directAimRandom);
         }
         protected void SetRabbitStunBehaviorVisibility(StunBehavior new_stun_behavior)
         {
@@ -331,7 +343,7 @@ namespace AnimalBehavior
             SetRabbitVisibility(rabbit_enabled);
             SetBearVisibility(bear_enabled);
             SetWolfStalkingBehaviorVisibility(wolf_stalking_behavior);
-            SetTwHoldingGroundBehaviorVisibility(tw_holding_ground_behavior);
+            SetWolfHoldingGroundBehaviorVisibility(wolf_holding_ground_behavior);
             SetRabbitStunBehaviorVisibility(rabbit_stun_behavior);
         }
         protected override void OnChange(FieldInfo field, object oldValue, object newValue)
@@ -346,7 +358,7 @@ namespace AnimalBehavior
             else if (field.Name == "rabbit_enabled") SetRabbitVisibility((bool)newValue);
             else if (field.Name == "bear_enabled") SetBearVisibility((bool)newValue);
             else if (field.Name == "wolf_stalking_behavior") SetWolfStalkingBehaviorVisibility((WolfStalkingBehavior)newValue);
-            else if (field.Name == "tw_holding_ground_behavior") SetTwHoldingGroundBehaviorVisibility((TwHoldingGround)newValue);
+            else if (field.Name == "wolf_holding_ground_behavior") SetWolfHoldingGroundBehaviorVisibility((WolfHoldingGround)newValue);
             else if (field.Name == "rabbit_stun_behavior") SetRabbitStunBehaviorVisibility((StunBehavior)newValue);
         }
         protected override void OnConfirm()

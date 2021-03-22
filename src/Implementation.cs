@@ -15,14 +15,8 @@ namespace AnimalBehavior
 
                 if (currentStalkingIntervalTime >= AB_Settings.Get().wolf_stalking_attack_interval)
                 {
-                    //!delete 
-                    MelonLoader.MelonLogger.Log("time: {0}, interval time: {1}", currentStalkingIntervalTime, AB_Settings.Get().wolf_stalking_attack_interval);
-
                     bool roll = Utils.RollChance(AB_Settings.Get().wolf_stalking_attack_chance);
                     currentStalkingIntervalTime = 0;
-                    //!delete 
-                    MelonLoader.MelonLogger.Log("rollresult: {0}, rollchance: {1}", roll, AB_Settings.Get().wolf_stalking_attack_chance);
-
                     return roll;
                 }
             }
@@ -34,38 +28,34 @@ namespace AnimalBehavior
             return false;
         }
         private static float currentHoldGroundIntervalTime = 0;
-        private static bool TwShouldFlee = false;
-        internal static bool TwRandomShouldFlee(BaseAi instance)
+        private static bool WolfShouldFlee = false;
+        internal static bool WolfRandomShouldFlee(BaseAi instance)
         {
             if (!GameManager.GetPlayerManagerComponent().PlayerIsZooming()) // Reset when not zooming.
             {
-                //!delete 
-                MelonLoader.MelonLogger.Log("reset");
-
-                currentHoldGroundIntervalTime = Time.time - AB_Settings.Get().tw_holding_ground_flee_interval;
-                TwShouldFlee = false;
+                ResetShouldFlee();
                 return false;
             }
-            if (TwShouldFlee) // Keep fleeing until reset.
+
+            if (WolfShouldFlee) // Keep fleeing until reset.
             {
                 return true;
             }
 
-            if (currentHoldGroundIntervalTime <= Time.time - AB_Settings.Get().tw_holding_ground_flee_interval)
+            if (currentHoldGroundIntervalTime <= Time.time - AB_Settings.Get().wolf_holding_ground_flee_interval)
             {
-                //!delete 
-                MelonLoader.MelonLogger.Log("time: {0}, interval time: {1}", currentHoldGroundIntervalTime, AB_Settings.Get().tw_holding_ground_flee_interval);
-
-                bool roll = TwShouldFlee = Utils.RollChance(AB_Settings.Get().tw_holding_ground_flee_chance);
+                bool roll = WolfShouldFlee = Utils.RollChance(AB_Settings.Get().wolf_holding_ground_flee_chance);
                 currentHoldGroundIntervalTime = Time.time;
-                //!delete 
-                MelonLoader.MelonLogger.Log("rollresult: {0}, rollchance: {1}", roll, AB_Settings.Get().tw_holding_ground_flee_chance);
-
                 return roll;
             }
             return false;
         }
+        internal static void ResetShouldFlee()
+        {
+            currentHoldGroundIntervalTime = Time.time - AB_Settings.Get().wolf_holding_ground_flee_interval;
+            WolfShouldFlee = false;
 
+        }
         internal static void ApplyWolfSettings(BaseAi instance)
         {
             var settings = AB_Settings.Get();
