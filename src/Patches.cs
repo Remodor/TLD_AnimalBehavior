@@ -1,4 +1,4 @@
-using Harmony;
+﻿using Harmony;
 using UnityEngine;
 using MelonLoader;
 
@@ -114,12 +114,19 @@ namespace AnimalBehavior
         }
     }
     //* Custom bleed out modifier
-    [HarmonyPatch(typeof(BodyDamage), "GetBleedOutMinutes")]
+    [HarmonyPatch(typeof(BaseAi), "ApplyDamage", new System.Type[] { typeof(float), typeof(float), typeof(DamageSource), typeof(string) })]
     internal class LocalizedDamage_GetBleedOutMinutes
     {
-        internal static void Postfix(ref float __result)
+        internal static void Prefix(float damage, ref float bleedOutMintues, DamageSource damageSource, string collider)
         {
-            __result *= Settings.Get().bleed_out_multiplier;
+            if (collider == "StruggleTap") // Wolf struggle.
+            {
+                bleedOutMintues *= Settings.Get().bleed_out_modifier_wolf_struggle;
+            }
+            else
+            {
+                bleedOutMintues *= Settings.Get().bleed_out_modifier;
+            }
         }
     }
     //* Custom animal values.
@@ -128,13 +135,6 @@ namespace AnimalBehavior
     {
         internal static void Postfix(BaseAi __instance)
         {
-            //!delete 
-            MelonLoader.MelonLogger.Log("-------------DisplayName before changes: {0}", __instance.m_DisplayName);
-            MelonLoader.MelonLogger.Log("minflee: {0}, m_SmellRange: {1}", __instance.m_MinimumFleeTime, __instance.m_SmellRange);
-            MelonLoader.MelonLogger.Log("m_DetectionRange: {0}, m_HearFootstepsRange: {1}", __instance.m_DetectionRange, __instance.m_HearFootstepsRange);
-            MelonLoader.MelonLogger.Log("m_DetectionRangeWhileFeeding: {0}, m_HearFootstepsRangeWhileFeeding: {1}", __instance.m_DetectionRangeWhileFeeding, __instance.m_HearFootstepsRangeWhileFeeding);
-            MelonLoader.MelonLogger.Log("m_StalkingBeginChasingDistance: {0}", __instance.m_StalkingBeginChasingDistance);
-
             switch (__instance.m_AiSubType)
             {
                 case AiSubType.Wolf:
@@ -160,15 +160,8 @@ namespace AnimalBehavior
                     Implementation.ApplyBearSettings(__instance);
                     break;
             }
-            //!delete 
-            MelonLoader.MelonLogger.Log("After changes ----------------------");
-            MelonLoader.MelonLogger.Log("minflee: {0}, m_SmellRange: {1}", __instance.m_MinimumFleeTime, __instance.m_SmellRange);
-            MelonLoader.MelonLogger.Log("m_DetectionRange: {0}, m_HearFootstepsRange: {1}", __instance.m_DetectionRange, __instance.m_HearFootstepsRange);
-            MelonLoader.MelonLogger.Log("m_DetectionRangeWhileFeeding: {0}, m_HearFootstepsRangeWhileFeeding: {1}", __instance.m_DetectionRangeWhileFeeding, __instance.m_HearFootstepsRangeWhileFeeding);
-            MelonLoader.MelonLogger.Log("m_StalkingBeginChasingDistance: {0}", __instance.m_StalkingBeginChasingDistance);
         }
     }
-
     //* Rabbit stun behavior.
     [HarmonyPatch(typeof(BaseAi), "Stun")]
     internal class BaseAi_Stun
