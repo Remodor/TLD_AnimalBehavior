@@ -90,7 +90,6 @@ namespace AnimalBehavior
             var settings = AB_Settings.Get();
             if (settings.moose_enabled)
             {
-                instance.m_SmellRange = settings.moose_smell_range;
                 instance.m_DetectionRange = settings.moose_detection_range;
                 instance.m_HearFootstepsRange = settings.moose_hear_range;
                 instance.m_MinimumFleeTime = settings.moose_flee_duration;

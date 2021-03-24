@@ -8,26 +8,20 @@ namespace AnimalBehavior
     {
 
         //* ----Special----
-        [Section("Special Behavior")]
-        [Name("Bleed Out Modifier")]
-        [Description("The bleed out time is very dependend on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleedout duration for arrows, bullets and flare gun shells (Not wolf struggle!). A common bleed out duration is 60 ingame minutes, higher modifier means longer.\n(Vanilla = 1)")]
-        [Slider(0.1f, 10f, 100)]
-        public float bleed_out_multiplier = 1f;
-
         public enum WolfStalkingBehavior
         {
             Vanilla,
             Nothing,
             Random
         }
+        [Section("Special Behavior")]
         [Name("Wolf Stalking Behavior When Aiming")]
         [Description("The stalking behavior from wolves when the player aims at them.\n(Vanilla = Always start attacking, Nothing = Will not react to the player aiming, Random: Configurable)")]
         [Choice("Vanilla", "Nothing", "Random")]
         public WolfStalkingBehavior wolf_stalking_behavior = WolfStalkingBehavior.Vanilla;
         [Name("        Attack Probability")]
         [Description("The probability for an attack everytime it is checked.\n(0% = Never, 100% = Always, Default = 40%)")]
-        [Slider(0f, 100f, 101)]
-        public float wolf_stalking_attack_chance = 40f;
+        public int wolf_stalking_attack_chance = 40;
         [Name("        Attack Probability Interval")]
         [Description("The duration between each probability check in seconds. The first one is when you begin to aim.\n(Default = 2s)")]
         [Slider(0f, 10f, 101)]
@@ -56,14 +50,13 @@ namespace AnimalBehavior
         public WolfHoldingGroundWolves wolf_holding_ground_wolves = WolfHoldingGroundWolves.Both;
 
         [Name("        Direct Aim Accuracy")]
-        [Description("How close you have to aim you crosshair on a wolf to trigger fleeing.\n(0 = Aim anywhere, 100 = Directly on it, Default = 94)")]
-        [Slider(0f, 100f, 100)]
-        public float wolf_holding_ground_aim_accuracy = 94f;
+        [Description("How close you have to aim you crosshair on a wolf to trigger fleeing.\n(0 = Aim anywhere, 99 = Directly on it, Default = 94)")]
+        [Slider(0, 99, 100)]
+        public int wolf_holding_ground_aim_accuracy = 94;
 
         [Name("        Flee Probability")]
         [Description("The probability for fleeing everytime it is checked.\n(0% = Never, 100% = Always, Default = 20%)")]
-        [Slider(0f, 100f, 101)]
-        public float wolf_holding_ground_flee_chance = 20f;
+        public int wolf_holding_ground_flee_chance = 20;
         [Name("        Flee Probability Interval")]
         [Description("The duration between each probability check in seconds.\n(Default = 1s)")]
         [Slider(0f, 10f, 101)]
@@ -81,187 +74,193 @@ namespace AnimalBehavior
         public StunBehavior rabbit_stun_behavior = StunBehavior.Vanilla;
         [Name("        Kill On Hit Probability")]
         [Description("The probability to instantly kill the rabbit.\n(Vanilla = 0%, default = 12%)")]
-        [Slider(0f, 100f, 101)]
-        public float rabbit_kill_on_hit_chance = 12f;
+        public int rabbit_kill_on_hit_chance = 12;
+        [Name("        Maximum Stun Duration")]
+        [Description("The maximum stun duration when set to random. This overrides the stun duration in the rabbits section.\n(Vanilla = 4, default = 6)")]
+        [Slider(0f, 30f, 61)]
+        public float rabbit_maximum_stun_duration = 6f;
         [Name("        Minimum Stun Duration")]
-        [Description("The minimum stun duration when set to random. It is bounded by the maximum duration (the stun duration in the rabbits section).\n(Vanilla = 4, default = 1)")]
+        [Description("The minimum stun duration when set to random. This overrides the stun duration in the rabbits section.\n(Vanilla = 4, default = 1)")]
         [Slider(0f, 30f, 61)]
         public float rabbit_minimum_stun_duration = 1f;
+
+        [Name("Bleed Out Modifier")]
+        [Description("The bleed out time is very dependend on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleedout duration for arrows, bullets and flare gun shells (Not wolf struggle!).\nA common bleed out duration is 60 INGAME minutes, higher modifier means longer.\n(Vanilla = 1)")]
+        [Slider(0.05f, 3f, 60)]
+        public float bleed_out_modifier = 1f;
+        [Name("        Wolf Struggle")]
+        [Description("This modifier will be multiplied to the final bleedout duration for wolf struggle.\nThe default is 12 INGAME minutes for a knife.\n(Vanilla = 1, works with StruggleTweaks)")]
+        [Slider(0.1f, 5f, 50)]
+        public float bleed_out_modifier_wolf_struggle = 1f;
 
         //* ----Animal Stats----
         [Section("Animal Stats (Applied After Reload)")]
         //* ----Wolf----
         [Name("Wolf")]
-        [Description("Apply custom values to wolves.\nNote: also affects wolves' detection of rabbits and deer.\n(Vanilla = false, all values as of build 1.93")]
+        [Description("Apply custom values to wolves.\nNote: also affects wolves' detection of rabbits and deer.\n(Vanilla = false, all values as of build 1.93)")]
         public bool wolf_enabled = false;
 
         [Name("        Smell Range")]
         [Description("How far it can smell the player while carrying meat.\n(Vanilla = 100)")]
         [Slider(0f, 250f, 251)]
-        public float wolf_smell_range = 100f;
+        public int wolf_smell_range = 100;
         [Name("        Begin Charging Range")]
         [Description("How far it will start charging at you when stalking.\n(Vanilla = 15)")]
         [Slider(0f, 250f, 251)]
-        public float wolf_charging_range = 15f;
+        public int wolf_charging_range = 15;
 
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 75)")]
         [Slider(0f, 250f, 251)]
-        public float wolf_detection_range = 75f;
+        public int wolf_detection_range = 75;
 
         [Name("        Hear Range")]
         [Description("How far it can hear the player walk.\n(Vanilla = 60)")]
         [Slider(0f, 250f, 251)]
-        public float wolf_hear_range = 60f;
+        public int wolf_hear_range = 60;
 
         [Name("        Detection Range While Feeding")]
         [Description("How far it can see while it is feeding.\n(Vanilla = 20)")]
         [Slider(0f, 250f, 251)]
-        public float wolf_detection_range_while_feeding = 20f;
+        public int wolf_detection_range_while_feeding = 20;
         [Name("        Hear Range While Feeding")]
         [Description("How far it can hear the player walk while it is feeding.\n(Vanilla = 25)")]
         [Slider(0f, 250f, 251)]
-        public float wolf_hear_range_while_feeding = 25f;
+        public int wolf_hear_range_while_feeding = 25;
 
         [Name("        Flee Duration")]
         [Description("The minimum flee duration in seconds.\n(Vanilla = 8)")]
-        [Slider(0f, 60f, 61)]
+        [Slider(0f, 60f, 121)]
         public float wolf_flee_duration = 8f;
 
         //* ----Timberwolf----
         [Name("Timberwolf")]
-        [Description("Apply custom values to timberwolves.\nNote: also affects timberwolves' detection of rabbits and deer.\n(Vanilla = false, all values as of build 1.93")]
+        [Description("Apply custom values to timberwolves.\nNote: also affects timberwolves' detection of rabbits and deer.\n(Vanilla = false, all values as of build 1.93)")]
         public bool timberwolf_enabled = false;
 
         [Name("        Smell Range")]
         [Description("How far it can smell the player while carrying meat.\n(Vanilla = 120)")]
         [Slider(0f, 250f, 251)]
-        public float timberwolf_smell_range = 120f;
+        public int timberwolf_smell_range = 120;
 
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 90)")]
         [Slider(0f, 250f, 251)]
-        public float timberwolf_detection_range = 90f;
+        public int timberwolf_detection_range = 90;
 
         [Name("        Hear Range")]
         [Description("How far it can hear the player walk.\n(Vanilla = 120)")]
         [Slider(0f, 250f, 251)]
-        public float timberwolf_hear_range = 120f;
+        public int timberwolf_hear_range = 120;
 
         [Name("        Detection Range While Feeding")]
         [Description("How far it can see while it is feeding.\n(Vanilla = 35)")]
         [Slider(0f, 250f, 251)]
-        public float timberwolf_detection_range_while_feeding = 35f;
+        public int timberwolf_detection_range_while_feeding = 35;
 
         [Name("        Hear Range While Feeding")]
         [Description("How far it can hear the player walk while it is feeding.\n(Vanilla = 35)")]
         [Slider(0f, 250f, 251)]
-        public float timberwolf_hear_range_while_feeding = 35f;
+        public int timberwolf_hear_range_while_feeding = 35;
 
         [Name("        Flee Duration")]
         [Description("The minimum flee duration in seconds.\n(Vanilla = 10)")]
-        [Slider(0f, 60f, 61)]
+        [Slider(0f, 60f, 121)]
         public float timberwolf_flee_duration = 10f;
 
         //* ----Deer----
         [Name("Deer")]
-        [Description("Apply custom values to deers.\n(Vanilla = false, all values as of build 1.93")]
+        [Description("Apply custom values to deers.\n(Vanilla = false, all values as of build 1.93)")]
         public bool deer_enabled = false;
 
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 40)")]
         [Slider(0f, 250f, 251)]
-        public float deer_detection_range = 40f;
+        public int deer_detection_range = 40;
 
         [Name("        Hear Range")]
         [Description("How far it can hear the player walk.\n(Vanilla = 60)")]
         [Slider(0f, 250f, 251)]
-        public float deer_hear_range = 60f;
+        public int deer_hear_range = 60;
 
         [Name("        Flee Duration")]
         [Description("The minimum flee duration in seconds.\n(Vanilla = 8)")]
-        [Slider(0f, 60f, 61)]
+        [Slider(0f, 60f, 121)]
         public float deer_flee_duration = 8f;
 
         //* ----Moose----
         [Name("Moose")]
-        [Description("Apply custom values to Moose.\n(Vanilla = false, all values as of build 1.93")]
+        [Description("Apply custom values to Moose.\n(Vanilla = false, all values as of build 1.93)")]
         public bool moose_enabled = false;
-
-        [Name("        Smell Range")]
-        [Description("How far it can smell the player while carrying meat. It is up to you if that makes sense.\n(Vanilla = 0)")]
-        [Slider(0f, 250f, 251)]
-        public float moose_smell_range = 0f;
 
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 50)")]
         [Slider(0f, 250f, 251)]
-        public float moose_detection_range = 50f;
+        public int moose_detection_range = 50;
 
         [Name("        Hear Range")]
         [Description("How far it can hear the player walk.\n(Vanilla = 60)")]
         [Slider(0f, 250f, 251)]
-        public float moose_hear_range = 60f;
+        public int moose_hear_range = 60;
 
         [Name("        Flee Duration")]
         [Description("The minimum flee duration in seconds.\n(Vanilla = 8)")]
-        [Slider(0f, 60f, 61)]
+        [Slider(0f, 60f, 121)]
         public float moose_flee_duration = 8f;
 
         //* ----Rabbit----
         [Name("Rabbit")]
-        [Description("Apply custom values to rabbits.\n(Vanilla = false, all values as of build 1.93")]
+        [Description("Apply custom values to rabbits.\n(Vanilla = false, all values as of build 1.93)")]
         public bool rabbit_enabled = false;
 
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 12)")]
         [Slider(0f, 250f, 251)]
-        public float rabbit_detection_range = 12f;
+        public int rabbit_detection_range = 12;
 
         [Name("        Hear Range")]
         [Description("How far it can hear the player walk.\n(Vanilla = 7)")]
         [Slider(0f, 250f, 251)]
-        public float rabbit_hear_range = 7f;
+        public int rabbit_hear_range = 7;
 
         [Name("        Flee Duration")]
         [Description("The minimum flee duration in seconds.\n(Vanilla = 4)")]
-        [Slider(0f, 60f, 61)]
+        [Slider(0f, 60f, 121)]
         public float rabbit_flee_duration = 4f;
         [Name("        Stun Duration")]
         [Description("The stun duration in seconds when hit with a stone.\n(Vanilla = 4)")]
         [Slider(0f, 30f, 61)]
-        public float rabbit_stun_duration = 4;
+        public float rabbit_stun_duration = 4f;
 
         //* ----Bear----
         [Name("Bear")]
-        [Description("Apply custom values to bears.\n(Vanilla = false, all values as of build 1.93")]
+        [Description("Apply custom values to bears.\n(Vanilla = false, all values as of build 1.93)")]
         public bool bear_enabled = false;
 
         [Name("        Smell Range")]
         [Description("How far it can smell the player while carrying meat.\n(Vanilla = 150)")]
         [Slider(0f, 250f, 251)]
-        public float bear_smell_range = 150f;
+        public int bear_smell_range = 150;
 
         [Name("        Begin Charging Range")]
         [Description("How far it will start charging at you when stalking.\n(Vanilla = 25)")]
         [Slider(0f, 250f, 251)]
-        public float bear_charging_range = 25f;
+        public int bear_charging_range = 25;
 
         [Name("        Detection Range")]
         [Description("How far it can see.\n(Vanilla = 60)")]
         [Slider(0f, 250f, 251)]
-        public float bear_detection_range = 60f;
+        public int bear_detection_range = 60;
 
         [Name("        Hear Range")]
         [Description("How far it can hear the player walk.\n(Vanilla = 60)")]
         [Slider(0f, 250f, 251)]
-        public float bear_hear_range = 60f;
+        public int bear_hear_range = 60;
 
         [Name("        Flee Duration")]
         [Description("The minimum flee duration in seconds.\n(Vanilla = 8)")]
-        [Slider(0f, 60f, 61)]
+        [Slider(0f, 60f, 121)]
         public float bear_flee_duration = 8f;
-        //[Choice("Vanilla", "CanKill", "AllRandom")]
 
         protected void SetWolfStalkingBehaviorVisibility(WolfStalkingBehavior new_stalking_behavior)
         {
@@ -325,7 +324,6 @@ namespace AnimalBehavior
         }
         protected void SetMooseVisibility(bool visible)
         {
-            this.SetFieldVisible(GetType().GetField("moose_smell_range"), visible);
             this.SetFieldVisible(GetType().GetField("moose_hear_range"), visible);
             this.SetFieldVisible(GetType().GetField("moose_detection_range"), visible);
             this.SetFieldVisible(GetType().GetField("moose_flee_duration"), visible);
@@ -359,7 +357,7 @@ namespace AnimalBehavior
         }
         protected override void OnChange(FieldInfo field, object oldValue, object newValue)
         {
-            rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_stun_duration);
+            rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_maximum_stun_duration);
             base.RefreshGUI();
             base.OnChange(field, oldValue, newValue);
             if (field.Name == "wolf_enabled") SetWolfVisibility((bool)newValue);
@@ -374,7 +372,7 @@ namespace AnimalBehavior
         }
         protected override void OnConfirm()
         {
-            rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_stun_duration);
+            rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_maximum_stun_duration);
             base.RefreshGUI();
             base.OnConfirm();
         }

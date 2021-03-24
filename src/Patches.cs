@@ -1,4 +1,4 @@
-﻿using Harmony;
+using Harmony;
 using UnityEngine;
 using MelonLoader;
 
@@ -70,9 +70,6 @@ namespace AnimalBehavior
         {
             if (__instance.IsTimberwolf() && __instance.GetAiMode() == AiMode.HoldGround)
             {
-                //!delete 
-                MelonLoader.MelonLogger.Log("flee missed gun: {0}", __result);
-
                 __result = true;
             }
         }
@@ -132,6 +129,10 @@ namespace AnimalBehavior
         internal static void Postfix(BaseAi __instance)
         {
             //!delete 
+            MelonLoader.MelonLogger.Log("-------------DisplayName before changes: {0}", __instance.m_DisplayName);
+            MelonLoader.MelonLogger.Log("minflee: {0}, m_SmellRange: {1}", __instance.m_MinimumFleeTime, __instance.m_SmellRange);
+            MelonLoader.MelonLogger.Log("m_DetectionRange: {0}, m_HearFootstepsRange: {1}", __instance.m_DetectionRange, __instance.m_HearFootstepsRange);
+            MelonLoader.MelonLogger.Log("m_DetectionRangeWhileFeeding: {0}, m_HearFootstepsRangeWhileFeeding: {1}", __instance.m_DetectionRangeWhileFeeding, __instance.m_HearFootstepsRangeWhileFeeding);
             MelonLoader.MelonLogger.Log("m_StalkingBeginChasingDistance: {0}", __instance.m_StalkingBeginChasingDistance);
 
             switch (__instance.m_AiSubType)
@@ -160,7 +161,7 @@ namespace AnimalBehavior
                     break;
             }
             //!delete 
-            MelonLoader.MelonLogger.Log("DisplayName: {0}", __instance.m_DisplayName);
+            MelonLoader.MelonLogger.Log("After changes ----------------------");
             MelonLoader.MelonLogger.Log("minflee: {0}, m_SmellRange: {1}", __instance.m_MinimumFleeTime, __instance.m_SmellRange);
             MelonLoader.MelonLogger.Log("m_DetectionRange: {0}, m_HearFootstepsRange: {1}", __instance.m_DetectionRange, __instance.m_HearFootstepsRange);
             MelonLoader.MelonLogger.Log("m_DetectionRangeWhileFeeding: {0}, m_HearFootstepsRangeWhileFeeding: {1}", __instance.m_DetectionRangeWhileFeeding, __instance.m_HearFootstepsRangeWhileFeeding);
@@ -186,7 +187,7 @@ namespace AnimalBehavior
                 if (Settings.Get().rabbit_stun_behavior == StunBehavior.AllRandom)
                 {
                     float min = Settings.Get().rabbit_minimum_stun_duration;
-                    float max = Settings.Get().rabbit_stun_duration;
+                    float max = Settings.Get().rabbit_maximum_stun_duration;
                     float random_dur = UnityEngine.Random.Range(min, max);
                     __instance.m_StunSeconds = random_dur;
 
