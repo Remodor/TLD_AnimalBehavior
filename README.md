@@ -4,6 +4,9 @@ This is a mod for **The Long Dark** by Hinterland Studio, Inc.
 
 It includes [TweakRabbits](https://github.com/ds5678/TweakRabbits) and [DetectionRange](https://github.com/ds5678/DetectionRange) ported by [ds5678](https://github.com/ds5678) and originally made by [AlexTheRegent](https://github.com/AlexTheRegent).
 **Special thanks** to both for all their contributions!
+Let's you customize many animal behavior like fleeing duration, bleed out modifier, wolf behavior on aiming and many more, in addition to the included and enhanced TweakRabbits and DetectionRange.
+
+These mods are obsolete and have to be removed in order to use this mod!
 
 ## Description
 
