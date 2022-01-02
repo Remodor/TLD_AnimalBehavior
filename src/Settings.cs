@@ -84,14 +84,46 @@ namespace AnimalBehavior
         [Slider(0f, 30f, 61, NumberFormat = "{0:F1}s")]
         public float rabbit_minimum_stun_duration = 1f;
 
+        //* ----Bleeding----
+        [Section("Animal Bleeding")]
         [Name("Bleed Out Modifier")]
-        [Description("The bleed out time is very dependend on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleedout duration for arrows, bullets and flare gun shells (Not wolf struggle!).\nA common bleed out duration is 60 INGAME minutes, higher modifier means longer.\n(Vanilla = 1)")]
+        [Description("The bleed out time is very dependent on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleed out duration for arrows, bullets and flare gun shells (Not wolf struggle!).\nA common bleed out duration is 60 INGAME minutes, higher modifier means longer.\n(Vanilla = 1)")]
         [Slider(0.05f, 3f, 60, NumberFormat = "{0:F2}")]
         public float bleed_out_modifier = 1f;
-        [Name("        Wolf Struggle")]
-        [Description("This modifier will be multiplied to the final bleedout duration for wolf struggle.\nThe default is 12 INGAME minutes for a knife.\n(Vanilla = 1, works with StruggleTweaks)")]
-        [Slider(0.1f, 5f, 50)]
+
+        [Name("Stackable Bleeding")]
+        [Description("If you want stackable bleeding. If an animal is hit multiple times bleeding will get accumulated. Also applies to wolf struggle. Wolf struggle multiplier should get set accordingly.\nE.g. Two hits with: Duration1 = 60, Duration2 = 90\n-> Final duration = 36\n(Vanilla = false [Only the shorter duration counts])")]
+        public bool stackable_bleed_out = false;
+
+        [Name("Wolf Struggle")]
+        [Description("This modifier will be multiplied to the final bleed out duration for wolf struggle.\nThe default is 12 INGAME minutes for a knife. If used together with stackable bleeding, this should be set pretty high as you hit the wolf around 10 times, e.g. 20.\n(Vanilla = 1)")]
+        [Slider(0.2f, 40f, 200)]
         public float bleed_out_modifier_wolf_struggle = 1f;
+
+        [Name("Blood Drop Lifetime")]
+        [Description("Specify the lifetime of blood drops in hours. The oldest one will also disappear when the maximum amount of decals is reached. This is mostly the case if you don't increase the number of decals.\n(Vanilla = 1h)")]
+        [Slider(0, 8, 161, NumberFormat = "{0:F2}h")]
+        public float blood_drop_lifetime = 1;
+
+        [Name("        Lifetime - Blizzard")]
+        [Description("Specify the blood drop lifetime in hours if created during blizzards.\n(Vanilla = 0.005h)")]
+        [Slider(0, 1, 201, NumberFormat = "{0:F3}h")]
+        public float blood_drop_lifetime_blizzard = 0.005f;
+
+        [Name("        Lifetime - Heavy Snow")]
+        [Description("Specify the blood drop lifetime in hours if created during heavy snow.\n(Vanilla = 0.2h)")]
+        [Slider(0, 2, 201, NumberFormat = "{0:F2}h")]
+        public float blood_drop_lifetime_heavy_snow = 0.2f;
+
+        [Name("        Lifetime - High Winds")]
+        [Description("Specify the blood drop lifetime in hours if created during high winds.\n(Vanilla = 0.3h)")]
+        [Slider(0, 2, 201, NumberFormat = "{0:F2}h")]
+        public float blood_drop_lifetime_high_winds = 0.3f;
+
+        [Name("Maximum Decals (Reload Required)")]
+        [Description("Specify the maximum amount of decals. These are: Player blood, animal blood, ice cracks, bullet decals. The oldest one will disappear when the maximum amount of decals is reached.\nKeep in mind, they need to be computed and may affect FPS! However, I had no problems even with 1000.\n(Vanilla = 250)")]
+        [Slider(5, 1000, 200)]
+        public int maximum_decals = 250;
 
         //* ----Animal Stats----
         [Section("Animal Stats (Applied After Reload)")]
@@ -261,6 +293,14 @@ namespace AnimalBehavior
         [Description("The minimum flee duration in seconds.\n(Vanilla = 8)")]
         [Slider(0f, 60f, 121, NumberFormat = "{0:F1}s")]
         public float bear_flee_duration = 8f;
+
+        [Name("        Ignore Flares")]
+        [Description("Currently flares are very strong. This setting will let bears ignore held flares.\n(Vanilla = false)")]
+        public bool bear_ignore_flare = false;
+
+        [Name("        Ignore Marine Flares")]
+        [Description("This setting will let bears ignore held marine flares.\n(Vanilla = false)")]
+        public bool bear_ignore_marine_flare = false;
 
         protected void SetWolfStalkingBehaviorVisibility(WolfStalkingBehavior new_stalking_behavior)
         {

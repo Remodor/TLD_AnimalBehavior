@@ -52,12 +52,25 @@ There are many new settings in the *Mod Options*:
     - Minimum Stun Duration
 
       _The minimum stun duration when set to random. This overrides the stun duration in the rabbits section._
+- Animal Bleeding
   - Bleed Out Modifier
 
-      _The bleed out time is very dependend on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleedout duration for arrows, bullets and flare gun shells (Not wolf struggle!). A common bleed out duration is 60 INGAME minutes, higher modifier means longer._
-    - Wolf Struggle
+      _The bleed out time is very dependent on what the player uses, on which animal and where it is being hit. This modifier will be multiplied to the final bleed out duration for arrows, bullets and flare gun shells (Not wolf struggle!). A common bleed out duration is 60 INGAME minutes, higher modifier means longer._
+  - Stackable Bleeding
 
-      _This modifier will be multiplied to the final bleedout duration for wolf struggle._
+      _If you want stackable bleeding. If an animal is hit multiple times bleeding will get accumulated. Also applies to wolf struggle. Wolf struggle multiplier should get set accordingly. E.g. Two hits with: Duration1 = 60, Duration2 = 90 -> Final duration = 36_  
+  - Wolf Struggle
+
+      _"This modifier will be multiplied to the final bleed out duration for wolf struggle. The default is 12 INGAME minutes for a knife. If used together with stackable bleeding, this should be set pretty high as you hit the wolf around 10 times, e.g. 20._
+  - Blood Drop Lifetime
+  
+      _Specify the lifetime of blood drops in hours. The oldest one will also disappear when the maximum amount of decals is reached. This is mostly the case if you don't increase the number of decals._
+    - Lifetime - Blizzard/ Heavy Snow/ High Winds
+	
+	  _Lets you specify the respective lifetimes under special conditions._
+  - Maximum Decals (Reload Required)
+  
+      *Specify the maximum amount of decals. These are: Player blood, animal blood, ice cracks, bullet decals. The oldest one will disappear when the maximum amount of decals is reached. Keep in mind, they need to be computed and may affect FPS! However, I had no problems even with 1000.*
 - Animal Stats (Applied After Reload)
   - Wolf
 
@@ -122,6 +135,12 @@ There are many new settings in the *Mod Options*:
     - Detection Range
     - Hear Range
     - Flee Duration
+	- Ignore Flares
+	
+	  *Currently flares are very strong. This setting will let bears ignore held flares.*
+	- Ignore Marine Flares
+	
+	  *This setting will let bears ignore held marine flares.*
 
 ## Installation
 

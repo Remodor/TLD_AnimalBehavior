@@ -34,5 +34,5 @@ using MelonLoader;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: MelonInfo(typeof(AnimalBehavior.Implementation), "AnimalBehavior", "1.0.0", "AlexTheRegent, ds5678, Remodor")]
+[assembly: MelonInfo(typeof(AnimalBehavior.Implementation), "AnimalBehavior", "1.1.0", "Remodor")]
 [assembly: MelonGame("Hinterland", "TheLongDark")]

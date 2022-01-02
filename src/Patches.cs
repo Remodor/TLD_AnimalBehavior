@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using UnityEngine;
 using MelonLoader;
 
@@ -113,11 +113,38 @@ namespace AnimalBehavior
 
         }
     }
-    //* Custom bleed out modifier
-    [HarmonyPatch(typeof(BaseAi), "ApplyDamage", new System.Type[] { typeof(float), typeof(float), typeof(DamageSource), typeof(string) })]
-    internal class LocalizedDamage_GetBleedOutMinutes
+    //* Bears ignore flares.
+    [HarmonyPatch(typeof(BaseAi), "MaybeHoldGroundForRedFlareForAttack")]
+    internal class BaseAi_MaybeHoldGroundForRedFlareForAttack
     {
-        internal static void Prefix(float damage, ref float bleedOutMintues, DamageSource damageSource, string collider)
+        internal static bool Prefix(BaseAi __instance, ref bool __result)
+        {
+            if (__instance.m_AiSubType == AiSubType.Bear && Settings.Get().bear_ignore_flare)
+            {
+                __result = false;
+                return false;
+            }
+            return true;
+        }
+    }
+    [HarmonyPatch(typeof(BaseAi), "MaybeHoldGroundForBlueFlareForAttack")]
+    internal class BaseAi_MaybeHoldGroundForBlueFlareForAttack
+    {
+        internal static bool Prefix(BaseAi __instance, ref bool __result)
+        {
+            if (__instance.m_AiSubType == AiSubType.Bear && Settings.Get().bear_ignore_marine_flare)
+            {
+                __result = false;
+                return false;
+            }
+            return true;
+        }
+    }
+    //* Custom bleed out modifier. Stackable bleed out.
+    [HarmonyPatch(typeof(BaseAi), "ApplyDamage", new System.Type[] { typeof(float), typeof(float), typeof(DamageSource), typeof(string) })]
+    internal class BaseAi_ApplyDamage
+    {
+        internal static void Prefix(BaseAi __instance, float damage, ref float bleedOutMintues, DamageSource damageSource, string collider)
         {
             if (collider == "StruggleTap") // Wolf struggle.
             {
@@ -126,6 +153,48 @@ namespace AnimalBehavior
             else
             {
                 bleedOutMintues *= Settings.Get().bleed_out_modifier;
+            }
+            if (Settings.Get().stackable_bleed_out
+                && __instance.IsBleedingOut() && !Utils.IsZero(bleedOutMintues))
+            {
+                float bleedProgress = __instance.m_ElapsedBleedingOutMinutes / __instance.m_DeathAfterBleeingOutMinutes;
+                if (bleedProgress >= 1) { return; }
+                float sum = bleedOutMintues + __instance.m_DeathAfterBleeingOutMinutes;
+                float product = bleedOutMintues * __instance.m_DeathAfterBleeingOutMinutes;
+                float combinedBleedOut = product / sum;
+                float newBleedProgress = combinedBleedOut * bleedProgress;
+                __instance.m_DeathAfterBleeingOutMinutes = combinedBleedOut;
+                __instance.m_ElapsedBleedingOutMinutes = newBleedProgress;
+            }
+        }
+    }
+    //* Blood decals lifetime.
+    [HarmonyPatch(typeof(DynamicDecalsManager), "ComputeDecalProjectorLifeTime")]
+    internal class DynamicDecalsManager_ComputeDecalProjectorLifeTime
+    {
+        internal static void Prefix(DynamicDecalsManager __instance, DecalProjectorType projectorType)
+        {
+            if (projectorType == DecalProjectorType.AnimalBlood)
+            {
+                __instance.m_NPCDecalsLifeTimeHours = Settings.Get().blood_drop_lifetime;
+                __instance.m_NPCDecalsLifeTimeInBlizzardHours = Settings.Get().blood_drop_lifetime_blizzard;
+                __instance.m_NPCDecalsLifeTimeInHeavySnowHours = Settings.Get().blood_drop_lifetime_heavy_snow;
+                __instance.m_NPCDecalsLifeTimeInHighWindsHours = Settings.Get().blood_drop_lifetime_high_winds;
+            }
+        }
+    }
+    //* Maximum decals.
+    [HarmonyPatch(typeof(DynamicDecalsManager), "InstantiateDecalProjectorInstances")]
+    internal class DynamicDecalsManager_InstantiateDecalProjectorInstances
+    {
+        internal static void Postfix(DynamicDecalsManager __instance)
+        {
+            __instance.m_MaxNonPlacedDynamicDecals = Settings.Get().maximum_decals;
+            int missingDecals = __instance.m_MaxNonPlacedDynamicDecals + __instance.m_MaxPlacedDynamicDecals + __instance.m_PoolSizeIncrement - __instance.m_Pool_DecalProjectorInstances.Count;
+            if (missingDecals > 0)
+            {
+                MelonLogger.Log("Current decals: {0}, create missing decals: {1}.", __instance.m_Pool_DecalProjectorInstances.Count, missingDecals);
+                __instance.InstantiateDecalProjectorInstances(missingDecals);
             }
         }
     }
