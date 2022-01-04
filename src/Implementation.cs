@@ -5,6 +5,11 @@ namespace AnimalBehavior
 {
     public class Implementation : MelonMod
     {
+        internal static float RandomValueBetween(float min, float max, float randomFactor)
+        {
+            float delta = max - min;
+            return (delta * randomFactor) + min;
+        }
         private static float currentStalkingIntervalTime = 0;
         internal static bool WolfRandomShouldAttack(BaseAi instance)
         {

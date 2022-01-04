@@ -104,26 +104,47 @@ namespace AnimalBehavior
         [Description("Specify the lifetime of blood drops in hours. The oldest one will also disappear when the maximum amount of decals is reached. This is mostly the case if you don't increase the number of decals.\n(Vanilla = 1h)")]
         [Slider(0, 8, 161, NumberFormat = "{0:F2}h")]
         public float blood_drop_lifetime = 1;
-
         [Name("        Lifetime - Blizzard")]
         [Description("Specify the blood drop lifetime in hours if created during blizzards.\n(Vanilla = 0.005h)")]
         [Slider(0, 1, 201, NumberFormat = "{0:F3}h")]
         public float blood_drop_lifetime_blizzard = 0.005f;
-
         [Name("        Lifetime - Heavy Snow")]
         [Description("Specify the blood drop lifetime in hours if created during heavy snow.\n(Vanilla = 0.2h)")]
         [Slider(0, 2, 201, NumberFormat = "{0:F2}h")]
         public float blood_drop_lifetime_heavy_snow = 0.2f;
-
         [Name("        Lifetime - High Winds")]
         [Description("Specify the blood drop lifetime in hours if created during high winds.\n(Vanilla = 0.3h)")]
         [Slider(0, 2, 201, NumberFormat = "{0:F2}h")]
         public float blood_drop_lifetime_high_winds = 0.3f;
 
+        [Name("    Lifetime - Randomness")]
+        [Description("If you like to add randomness to every blood drop.\n(Default = false)")]
+        public bool blood_drop_random_lifetime = false;
+        [Name("        Min Lifetime")]
+        [Description("The minimum lifetime of blood drops in hours. A random value is chosen between this and the 'Blood Drop Lifetime' -value.")]
+        [Slider(0, 8, 161, NumberFormat = "{0:F2}h")]
+        public float blood_drop_min_lifetime = 1;
+        [Name("        Min Lifetime - Blizzard")]
+        [Description("The minimum lifetime of blood drops created during blizzards. A random value is chosen between this and the 'Lifetime - Blizzard' -value.")]
+        [Slider(0, 1, 201, NumberFormat = "{0:F3}h")]
+        public float blood_drop_min_lifetime_blizzard = 0.005f;
+        [Name("        Min Lifetime - Heavy Snow")]
+        [Description("The minimum lifetime of blood drops created during heavy snow. A random value is chosen between this and the 'Lifetime - Heavy Snow' -value.")]
+        [Slider(0, 2, 201, NumberFormat = "{0:F2}h")]
+        public float blood_drop_min_lifetime_heavy_snow = 0.2f;
+        [Name("        Min Lifetime - High Winds")]
+        [Description("The minimum lifetime of blood drops created during high winds. A random value is chosen between this and the 'Lifetime - High Winds' -value.")]
+        [Slider(0, 2, 201, NumberFormat = "{0:F2}h")]
+        public float blood_drop_min_lifetime_high_winds = 0.3f;
+
+
         [Name("Maximum Decals (Reload Required)")]
         [Description("Specify the maximum amount of decals. These are: Player blood, animal blood, ice cracks, bullet decals. The oldest one will disappear when the maximum amount of decals is reached.\nKeep in mind, they need to be computed and may affect FPS! However, I had no problems even with 1000.\n(Vanilla = 250)")]
         [Slider(5, 1000, 200)]
         public int maximum_decals = 250;
+        [Name("Try Restoring Blood When Loading")]
+        [Description("Changing scenes, e.g. when entering a house, completely resets all decals. This tries to restore previous decals. Only works if you enter a location and exit back to the previous location. Works pretty good to go inside, recover and continue the chase!")]
+        public bool restore_blood = false;
 
         //* ----Animal Stats----
         [Section("Animal Stats (Applied After Reload)")]
@@ -337,6 +358,13 @@ namespace AnimalBehavior
             }
 
         }
+        protected void SetRandomBloodVisibility(bool visible)
+        {
+            this.SetFieldVisible(GetType().GetField("blood_drop_min_lifetime"), visible);
+            this.SetFieldVisible(GetType().GetField("blood_drop_min_lifetime_blizzard"), visible);
+            this.SetFieldVisible(GetType().GetField("blood_drop_min_lifetime_heavy_snow"), visible);
+            this.SetFieldVisible(GetType().GetField("blood_drop_min_lifetime_high_winds"), visible);
+        }
         protected void SetWolfVisibility(bool visible)
         {
             this.SetFieldVisible(GetType().GetField("wolf_smell_range"), visible);
@@ -394,10 +422,15 @@ namespace AnimalBehavior
             SetWolfStalkingBehaviorVisibility(wolf_stalking_behavior);
             SetWolfHoldingGroundBehaviorVisibility(wolf_holding_ground_behavior);
             SetRabbitStunBehaviorVisibility(rabbit_stun_behavior);
+            SetRandomBloodVisibility(blood_drop_random_lifetime);
         }
         protected override void OnChange(FieldInfo field, object oldValue, object newValue)
         {
             rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_maximum_stun_duration);
+            blood_drop_min_lifetime = Mathf.Min(blood_drop_min_lifetime, blood_drop_lifetime);
+            blood_drop_min_lifetime_blizzard = Mathf.Min(blood_drop_min_lifetime_blizzard, blood_drop_lifetime_blizzard);
+            blood_drop_min_lifetime_heavy_snow = Mathf.Min(blood_drop_min_lifetime_heavy_snow, blood_drop_lifetime_heavy_snow);
+            blood_drop_min_lifetime_high_winds = Mathf.Min(blood_drop_min_lifetime_high_winds, blood_drop_lifetime_high_winds);
             base.RefreshGUI();
             base.OnChange(field, oldValue, newValue);
             if (field.Name == "wolf_enabled") SetWolfVisibility((bool)newValue);
@@ -409,10 +442,15 @@ namespace AnimalBehavior
             else if (field.Name == "wolf_stalking_behavior") SetWolfStalkingBehaviorVisibility((WolfStalkingBehavior)newValue);
             else if (field.Name == "wolf_holding_ground_behavior") SetWolfHoldingGroundBehaviorVisibility((WolfHoldingGround)newValue);
             else if (field.Name == "rabbit_stun_behavior") SetRabbitStunBehaviorVisibility((StunBehavior)newValue);
+            else if (field.Name == "blood_drop_random_lifetime") SetRandomBloodVisibility((bool)newValue);
         }
         protected override void OnConfirm()
         {
             rabbit_minimum_stun_duration = Mathf.Min(rabbit_minimum_stun_duration, rabbit_maximum_stun_duration);
+            blood_drop_min_lifetime = Mathf.Min(blood_drop_min_lifetime, blood_drop_lifetime);
+            blood_drop_min_lifetime_blizzard = Mathf.Min(blood_drop_min_lifetime_blizzard, blood_drop_lifetime_blizzard);
+            blood_drop_min_lifetime_heavy_snow = Mathf.Min(blood_drop_min_lifetime_heavy_snow, blood_drop_lifetime_heavy_snow);
+            blood_drop_min_lifetime_high_winds = Mathf.Min(blood_drop_min_lifetime_high_winds, blood_drop_lifetime_high_winds);
             base.RefreshGUI();
             base.OnConfirm();
         }

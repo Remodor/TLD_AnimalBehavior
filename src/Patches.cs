@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 using MelonLoader;
-
+using System.Collections.Generic;
 
 namespace AnimalBehavior
 {
@@ -176,25 +176,83 @@ namespace AnimalBehavior
         {
             if (projectorType == DecalProjectorType.AnimalBlood)
             {
-                __instance.m_NPCDecalsLifeTimeHours = Settings.Get().blood_drop_lifetime;
-                __instance.m_NPCDecalsLifeTimeInBlizzardHours = Settings.Get().blood_drop_lifetime_blizzard;
-                __instance.m_NPCDecalsLifeTimeInHeavySnowHours = Settings.Get().blood_drop_lifetime_heavy_snow;
-                __instance.m_NPCDecalsLifeTimeInHighWindsHours = Settings.Get().blood_drop_lifetime_high_winds;
+                if (Settings.Get().blood_drop_random_lifetime)
+                {
+                    float rand = Random.value;
+                    __instance.m_NPCDecalsLifeTimeHours = Implementation.RandomValueBetween(Settings.Get().blood_drop_min_lifetime, Settings.Get().blood_drop_lifetime, rand);
+                    __instance.m_NPCDecalsLifeTimeInBlizzardHours = Implementation.RandomValueBetween(Settings.Get().blood_drop_min_lifetime_blizzard, Settings.Get().blood_drop_lifetime_blizzard, rand);
+                    __instance.m_NPCDecalsLifeTimeInHeavySnowHours = Implementation.RandomValueBetween(Settings.Get().blood_drop_min_lifetime_heavy_snow, Settings.Get().blood_drop_lifetime_heavy_snow, rand);
+                    __instance.m_NPCDecalsLifeTimeInHighWindsHours = Implementation.RandomValueBetween(Settings.Get().blood_drop_min_lifetime_high_winds, Settings.Get().blood_drop_lifetime_high_winds, rand);
+                }
+                else
+                {
+                    __instance.m_NPCDecalsLifeTimeHours = Settings.Get().blood_drop_lifetime;
+                    __instance.m_NPCDecalsLifeTimeInBlizzardHours = Settings.Get().blood_drop_lifetime_blizzard;
+                    __instance.m_NPCDecalsLifeTimeInHeavySnowHours = Settings.Get().blood_drop_lifetime_heavy_snow;
+                    __instance.m_NPCDecalsLifeTimeInHighWindsHours = Settings.Get().blood_drop_lifetime_high_winds;
+                }
+                if (__instance.m_DynamicDecalProjectors.Count > __instance.m_MaxNonPlacedDynamicDecals)
+                {
+                    __instance.RemoveOldestNonPlacedDecal();
+                }
             }
         }
     }
     //* Maximum decals.
     [HarmonyPatch(typeof(DynamicDecalsManager), "InstantiateDecalProjectorInstances")]
-    internal class DynamicDecalsManager_InstantiateDecalProjectorInstances
+    internal class DynamicDecalsManager_InstantiateDecal
     {
         internal static void Postfix(DynamicDecalsManager __instance)
         {
             __instance.m_MaxNonPlacedDynamicDecals = Settings.Get().maximum_decals;
             int missingDecals = __instance.m_MaxNonPlacedDynamicDecals + __instance.m_MaxPlacedDynamicDecals + __instance.m_PoolSizeIncrement - __instance.m_Pool_DecalProjectorInstances.Count;
+            if (LoadScene_Load.restore)
+            {
+                missingDecals -= LoadScene_Load.decalsToRestore.Count;
+            }
             if (missingDecals > 0)
             {
-                MelonLogger.Log("Current decals: {0}, create missing decals: {1}.", __instance.m_Pool_DecalProjectorInstances.Count, missingDecals);
+                MelonLogger.Msg("Current decals: {0}, create missing decals: {1}.", __instance.m_Pool_DecalProjectorInstances.Count, missingDecals);
                 __instance.InstantiateDecalProjectorInstances(missingDecals);
+            }
+        }
+    }
+    [HarmonyPatch(typeof(SaveGameSystem), "LoadSceneData", new System.Type[] { typeof(string), typeof(string) })]
+    internal class SaveGameSystem_LoadSceneData
+    {
+        internal static void Postfix()
+        {
+            if (LoadScene_Load.restore && LoadScene_Load.decalsToRestore.Count != 0)
+            {
+                MelonLogger.Msg("Restored decals: {0}.", LoadScene_Load.decalsToRestore.Count);
+                GameManager.GetDynamicDecalsManager().m_DynamicDecalProjectors = LoadScene_Load.decalsToRestore;
+            }
+            LoadScene_Load.restore = false;
+        }
+    }
+    [HarmonyPatch(typeof(LoadScene), "LoadLevelWhenFadeOutComplete")]
+    internal class LoadScene_Load
+    {
+        internal static string previousScene;
+        internal static Il2CppSystem.Collections.Generic.List<DecalProjectorInstance> previousDecals;
+        internal static bool restore = false;
+        internal static Il2CppSystem.Collections.Generic.List<DecalProjectorInstance> decalsToRestore;
+
+        internal static void Prefix(LoadScene __instance)
+        {
+            if (Settings.Get().restore_blood)
+            {
+                if (__instance.GetSceneToLoad() == previousScene)
+                {
+                    decalsToRestore = previousDecals;
+                    restore = true;
+                } 
+                else
+                {
+                    restore = false;
+                }
+                previousScene = GameManager.m_ActiveScene;
+                previousDecals = GameManager.GetDynamicDecalsManager().m_DynamicDecalProjectors;
             }
         }
     }
@@ -252,10 +310,7 @@ namespace AnimalBehavior
                     float max = Settings.Get().rabbit_maximum_stun_duration;
                     float random_dur = UnityEngine.Random.Range(min, max);
                     __instance.m_StunSeconds = random_dur;
-
                 }
-
-
             }
             return true;
         }

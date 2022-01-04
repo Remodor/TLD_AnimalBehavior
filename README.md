@@ -66,11 +66,23 @@ There are many new settings in the *Mod Options*:
   
       _Specify the lifetime of blood drops in hours. The oldest one will also disappear when the maximum amount of decals is reached. This is mostly the case if you don't increase the number of decals._
     - Lifetime - Blizzard/ Heavy Snow/ High Winds
-	
-	  _Lets you specify the respective lifetimes under special conditions._
+
+    _Lets you specify the respective lifetimes under special conditions._
+  - LifeTime - Randomness
+  
+      *If you like to add randomness to every blood drop.*
+    - Min Lifetime
+
+    *The minimum lifetime of blood drops in hours. A random value is chosen between this and the 'Blood Drop Lifetime' -value.*
+  - Min Lifetime - Blizzard/ Heavy Snow/ High Winds
+
+    *Lets you specify the respective minimum lifetimes under special conditions. Similar to 'Min Lifetime'.*
   - Maximum Decals (Reload Required)
   
       *Specify the maximum amount of decals. These are: Player blood, animal blood, ice cracks, bullet decals. The oldest one will disappear when the maximum amount of decals is reached. Keep in mind, they need to be computed and may affect FPS! However, I had no problems even with 1000.*
+  - Try Restoring Blood When Loading
+  
+      *Changing scenes, e.g. when entering a house, completely resets all decals. This tries to restore previous decals. Only works if you enter a location and exit back to the previous location. Works pretty good to go inside, recover and continue the chase!*
 - Animal Stats (Applied After Reload)
   - Wolf
 
