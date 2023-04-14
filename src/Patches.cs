@@ -2,9 +2,11 @@
 using UnityEngine;
 using MelonLoader;
 using System.Collections.Generic;
+using Il2Cpp;
 
 namespace AnimalBehavior
 {
+    using Random = UnityEngine.Random;
     using Settings = AB_Settings;
     using StunBehavior = AnimalBehavior_Settings.StunBehavior;
     using WolfHoldingGround = AnimalBehavior_Settings.WolfHoldingGround;

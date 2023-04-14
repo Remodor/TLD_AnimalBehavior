@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using UnityEngine;
+using Il2Cpp;
 
 namespace AnimalBehavior
 {
@@ -131,7 +132,7 @@ namespace AnimalBehavior
             instance.m_DetectionRangeWhileFeeding *= customModifier;
             instance.m_HearFootstepsRangeWhileFeeding *= customModifier;
         }
-        public override void OnApplicationStart()
+        public override void OnInitializeMelon()
         {
             Debug.Log($"[{Info.Name}] version {Info.Version} loaded!");
             AB_Settings.OnLoad();
